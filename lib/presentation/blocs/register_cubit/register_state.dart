@@ -4,14 +4,14 @@ enum FormStatus { initial, valid, invalid, submitting }
 
 class RegisterFormState extends Equatable {
   final UsernameInput username;
-  final String email;
+  final EmailInput email;
   final PasswordInput password;
   final FormStatus formStatus;
   final bool isValid;
 
   const RegisterFormState({
     this.username = const UsernameInput.pure(),
-    this.email = '',
+    this.email = const EmailInput.pure(),
     this.password = const PasswordInput.pure(),
     this.formStatus = FormStatus.initial,
     this.isValid = false,
@@ -19,7 +19,7 @@ class RegisterFormState extends Equatable {
 
   RegisterFormState copyWith({
     UsernameInput? username,
-    String? email,
+    EmailInput? email,
     PasswordInput? password,
     FormStatus? formStatus,
     bool? isValid,

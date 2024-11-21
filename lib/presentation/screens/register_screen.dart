@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:forms_app/infrastructure/inputs/email.dart';
+import 'package:forms_app/infrastructure/inputs/password.dart';
+import 'package:forms_app/infrastructure/inputs/username.dart';
+import 'package:forms_app/presentation/blocs/register_cubit/register_cubit.dart';
 import 'package:forms_app/presentation/widgets/inputs/custom_text_form_field.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -10,7 +15,10 @@ class RegisterScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('New user registration'),
       ),
-      body: _RegisterView(),
+      body: BlocProvider(
+        create: (context) => RegisterCubit(),
+        child: _RegisterView(),
+      ),
     );
   }
 }
@@ -58,75 +66,85 @@ class _RegisterView extends StatelessWidget {
                 key: _formKey,
                 child: Column(
                   children: [
-                    CustomTextFormField(
-                      label: "Name",
-                      hintText: 'Your first name',
-                      filled: true,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        if (value.trim().isEmpty) {
-                          return 'Please enter a valid name';
-                        }
-                        if (value.endsWith(" ") || value.startsWith(" ")) {
-                          return 'The name must not contain spaces';
-                        }
-                        if (value.length < 6) {
-                          return 'Name must be at least 6 characters long';
-                        }
-                        return null;
+                    BlocSelector<RegisterCubit, RegisterFormState,
+                        UsernameInput>(
+                      selector: (state) {
+                        return state.username;
                       },
-                      onChanged: (value) {
-                        // Save it
-                      },
-                    ),
-                    const SizedBox(height: 16.0),
-                    CustomTextFormField(
-                      label: 'Email',
-                      hintText: 'email@gmail.com',
-                      filled: true,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                .hasMatch(value) ==
-                            false) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        // Save it
+                      builder: (context, username) {
+                        return CustomTextFormField(
+                          label: "Name",
+                          hintText: 'Your first name',
+                          filled: true,
+                          errorText: username.errorMessage,
+                          // errorText: username.isPure || username.isValid
+                          //     ? null
+                          //     : switch (username.error) {
+                          //         UsernameInputError.empty =>
+                          //           "Please enter your name",
+                          //         UsernameInputError.length =>
+                          //           "Name must be at least 6 characters long",
+                          //         UsernameInputError.witheSpace =>
+                          //           'Name cannot start or end with a space',
+                          //         null => null,
+                          //       },
+                          onChanged: (value) {
+                            // Save it
+                            context
+                                .read<RegisterCubit>()
+                                .usernameChanged(value);
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: 16.0),
-                    CustomTextFormField(
-                      label: 'Password',
-                      hintText: '********',
-                      filled: true,
-                      obscurteText: true,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 8) {
-                          return 'Password must be at least 8 characters long';
-                        }
-                        return null;
+                    BlocSelector<RegisterCubit, RegisterFormState, EmailInput>(
+                      selector: (state) {
+                        return state.email;
                       },
-                      onChanged: (value) {
-                        // Save it
+                      builder: (context, state) {
+                        return CustomTextFormField(
+                          label: 'Email',
+                          hintText: 'email@gmail.com',
+                          filled: true,
+                          errorText: state.errorMessage,
+                          onChanged: (value) {
+                            // Save it
+                            context.read<RegisterCubit>().emailChanged(value);
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16.0),
+                    BlocSelector<RegisterCubit, RegisterFormState,
+                        PasswordInput>(
+                      selector: (state) {
+                        return state.password;
+                      },
+                      builder: (context, state) {
+                        return CustomTextFormField(
+                          label: 'Password',
+                          hintText: '********',
+                          filled: true,
+                          obscurteText: true,
+                          errorText: state.errorMessage,
+                          onChanged: (value) {
+                            // Save it
+                            context
+                                .read<RegisterCubit>()
+                                .passwordChanged(value);
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          // Navigate to the main screen
-                        }
+                        // if (_formKey.currentState!.validate()) {
+                        //   _formKey.currentState!.save();
+                        //   // Navigate to the main screen
+                        // }
+                        context.read<RegisterCubit>().onSubmitted();
                       },
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
