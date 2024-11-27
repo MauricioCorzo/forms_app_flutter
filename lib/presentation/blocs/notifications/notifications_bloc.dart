@@ -9,6 +9,7 @@ part 'notifications_event.dart';
 part 'notifications_state.dart';
 
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
+  // firebase_messaging package instance
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   NotificationsBloc() : super(const NotificationsState()) {
@@ -22,6 +23,8 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   }
 
   void _initialStatusChcek() async {
+    // Check if the user has denied the permission for the first time or permanently whit the permission_handler package
+    // because the firebase_messaging package does not provide this functionality for Android 33+
     final hasBeenDeniedFirstTime =
         await Permission.notification.shouldShowRequestRationale;
     final isPermanentlyDenied =
