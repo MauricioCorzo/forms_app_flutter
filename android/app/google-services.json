@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "231071969734",
+    "project_id": "push-notification-flutte-426a4",
+    "storage_bucket": "push-notification-flutte-426a4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231071969734:android:332cae7e0519f4e68182c7",
+        "android_client_info": {
+          "package_name": "com.pichicor.formsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkfBMAYMgpCFo2ydHfM6OkoLv7CxJgQI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

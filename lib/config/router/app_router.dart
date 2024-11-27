@@ -1,4 +1,4 @@
-import 'package:forms_app/presentation/screens/index.dart';
+import 'package:formsapp/presentation/screens/index.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(initialLocation: "/", routes: [
@@ -18,4 +18,7 @@ final appRouter = GoRouter(initialLocation: "/", routes: [
     path: "/new-user",
     builder: (context, state) => const RegisterScreen(),
   ),
+  GoRoute(
+      path: "/notifications",
+      builder: (context, state) => const NotificationsScreen()),
 ]);

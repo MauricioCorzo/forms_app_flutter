@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:forms_app/infrastructure/inputs/email.dart';
-import 'package:forms_app/infrastructure/inputs/password.dart';
-import 'package:forms_app/infrastructure/inputs/username.dart';
-import 'package:forms_app/presentation/blocs/register_cubit/register_cubit.dart';
-import 'package:forms_app/presentation/widgets/inputs/custom_text_form_field.dart';
+import 'package:formsapp/infrastructure/inputs/email.dart';
+import 'package:formsapp/infrastructure/inputs/password.dart';
+import 'package:formsapp/infrastructure/inputs/username.dart';
+import 'package:formsapp/presentation/blocs/register_cubit/register_cubit.dart';
+import 'package:formsapp/presentation/widgets/inputs/custom_text_form_field.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});

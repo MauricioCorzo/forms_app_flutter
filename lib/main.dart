@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:forms_app/config/router/app_router.dart';
-import 'package:forms_app/config/theme/app_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formsapp/config/router/app_router.dart';
+import 'package:formsapp/config/theme/app_theme.dart';
+import 'package:formsapp/presentation/blocs/notifications/notifications_bloc.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationsBloc.initializeFirebase();
+  runApp(
+    MultiBlocProvider(
+      providers: [BlocProvider(create: (_) => NotificationsBloc())],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
