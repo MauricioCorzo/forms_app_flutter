@@ -6,7 +6,12 @@ import 'package:formsapp/presentation/blocs/notifications/notifications_bloc.dar
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Para notifiacaciones en segundo plano tiene que estar aqui
+  NotificationsBloc.initializeOnBackgroundMessage();
+
   await NotificationsBloc.initializeFirebase();
+
   runApp(
     MultiBlocProvider(
       providers: [BlocProvider(create: (_) => NotificationsBloc())],
