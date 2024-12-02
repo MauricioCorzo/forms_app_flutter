@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:formsapp/doamin/entities/push_message.dart';
 import 'package:formsapp/firebase_options.dart';
+import 'package:formsapp/helpers/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 part 'notifications_event.dart';
@@ -24,7 +25,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   NotificationsBloc() : super(const NotificationsState()) {
     on<NotificationStatusChanged>(_onNotificationStatusChange);
     on<NotificationRecived>(_onNotificationRecived);
-
+    TLoggerHelper.info('NotificationsBloc initialized');
     _initialStatusCheck();
     _onForegroundMessage();
   }
@@ -66,8 +67,8 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     // final settings = await messaging.getNotificationSettings();
 
     if (state.status == AuthorizationStatus.authorized) {
-      // String? token = await messaging.getToken();
-      // print('Token: $token');
+      String? token = await messaging.getToken();
+      TLoggerHelper.info('Token: $token');
     }
   }
 
@@ -131,5 +132,16 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
 
   void addNotification(PushMessage message) {
     add(NotificationRecived(message));
+  }
+
+  PushMessage? getPushMessageById(String pushMessageId) {
+    try {
+      return state.notifications.firstWhere(
+        (element) => element.messageId == pushMessageId,
+      );
+    } catch (e) {
+      TLoggerHelper.error('Push message not found', e);
+      return null;
+    }
   }
 }

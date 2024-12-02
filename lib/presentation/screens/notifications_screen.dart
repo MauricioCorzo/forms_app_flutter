@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formsapp/presentation/blocs/notifications/notifications_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
@@ -36,12 +37,15 @@ class _HomeView extends StatelessWidget {
       itemCount: notifications.length,
       itemBuilder: (context, index) {
         return ListTile(
-          title: Text("Notification ${notifications[index].title}"),
-          subtitle: Text(notifications[index].body),
-          leading: notifications[index].imageUrl != null
-              ? Image.network(notifications[index].imageUrl!)
-              : const Icon(Icons.notifications_active_outlined),
-        );
+            title: Text("Notification ${notifications[index].title}"),
+            subtitle: Text(notifications[index].body),
+            leading: notifications[index].imageUrl != null
+                ? Image.network(notifications[index].imageUrl!)
+                : const Icon(Icons.notifications_active_outlined),
+            onTap: () {
+              context.push(
+                  '/notifications-details/${notifications[index].messageId}');
+            });
       },
     );
   }

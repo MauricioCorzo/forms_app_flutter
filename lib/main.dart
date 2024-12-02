@@ -14,7 +14,12 @@ void main() async {
 
   runApp(
     MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => NotificationsBloc())],
+      providers: [
+        BlocProvider(
+          create: (_) => NotificationsBloc(),
+          lazy: false,
+        )
+      ],
       child: const MyApp(),
     ),
   );
