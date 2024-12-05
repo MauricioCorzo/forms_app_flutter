@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -8,6 +9,7 @@ import 'package:formsapp/doamin/entities/push_message.dart';
 import 'package:formsapp/firebase_options.dart';
 import 'package:formsapp/helpers/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'notifications_event.dart';
 part 'notifications_state.dart';
@@ -16,6 +18,29 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
+
+  TLoggerHelper.debug(
+      'Handling a background message ${message.messageId}, ${message.data}');
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final messageId = message.messageId?.replaceAll(RegExp(r'[:%]'), "") ?? "";
+
+  final pushMessage = PushMessage(
+    messageId: messageId,
+    title: message.notification!.title ?? "",
+    body: message.notification!.body ?? "",
+    sentDate: message.sentTime ?? DateTime.now(),
+    data: message.data,
+    imageUrl: Platform.isAndroid
+        ? message.notification!.android?.imageUrl
+        : message.notification!.apple?.imageUrl,
+  );
+
+  String jsonData = jsonEncode(PushMessage.toJson(pushMessage));
+
+  prefs.setString('notification:$messageId', jsonData);
+
+  TLoggerHelper.info('SavedNotification: $jsonData');
 }
 
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
@@ -72,7 +97,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     }
   }
 
-  void _handleRemoteMessage(RemoteMessage message) {
+  void handleRemoteMessage(RemoteMessage message) {
     if (message.notification == null) return;
 
     final PushMessage notification = PushMessage(
@@ -90,7 +115,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   }
 
   void _onForegroundMessage() {
-    FirebaseMessaging.onMessage.listen(_handleRemoteMessage);
+    FirebaseMessaging.onMessage.listen(handleRemoteMessage);
   }
 
   void requestPermission() async {
@@ -143,5 +168,28 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
       TLoggerHelper.error('Push message not found', e);
       return null;
     }
+  }
+
+  void readMessagesFromStorage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.reload();
+    final keys = prefs
+        .getKeys()
+        .where((key) => key.startsWith('notification:'))
+        .toList();
+
+    TLoggerHelper.warning(keys);
+
+// Aqui tengo las notificaciones guardadas que se recivieron cuando la app estaba terminada
+// esta funcion se llama dentro de la pantalla de notifiacaciones pero se puede llamar en donde sea y como sea,
+// lo ideal es que una vez leidas las notificaciones se eliminen de la lista de notificaciones guardadas en la base de datos local
+    final pushMessages = keys.map((key) {
+      final String? jsonData = prefs.getString(key);
+      if (jsonData == null) return null;
+
+      TLoggerHelper.info('ReadNotification: $jsonData');
+    }).toList();
+
+    // add(NotificationRecivedAll(messages));
   }
 }

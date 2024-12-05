@@ -33,6 +33,7 @@ class _HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifications =
         context.select((NotificationsBloc bloc) => bloc.state.notifications);
+    context.read<NotificationsBloc>().readMessagesFromStorage();
     return ListView.builder(
       itemCount: notifications.length,
       itemBuilder: (context, index) {

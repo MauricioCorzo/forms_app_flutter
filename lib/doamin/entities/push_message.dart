@@ -15,6 +15,17 @@ class PushMessage {
     required this.imageUrl,
   });
 
+  static Map<String, dynamic> toJson(PushMessage message) {
+    return {
+      'messageId': message.messageId,
+      'title': message.title,
+      'body': message.body,
+      'sentDate': message.sentDate.toString(),
+      'data': message.data,
+      'imageUrl': message.imageUrl,
+    };
+  }
+
   @override
   String toString() {
     return '''
@@ -28,4 +39,6 @@ PushMessage{
 }
 ''';
   }
+
+  static void fromJson(jsonDecode) {}
 }

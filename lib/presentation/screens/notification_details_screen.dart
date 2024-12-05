@@ -14,6 +14,7 @@ class NotificationDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final PushMessage? pushMessage =
         context.watch<NotificationsBloc>().getPushMessageById(pushMessageId);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notification Details'),
